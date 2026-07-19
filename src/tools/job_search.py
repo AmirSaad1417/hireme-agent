@@ -80,7 +80,7 @@ def search_jsearch_jobs(query: str, location: str = "", count: int = 5, api_key:
     if not active_key or not active_key.strip():
         raise ValueError("RapidAPI key is not configured in environment or Streamlit secrets.")
         
-    url = "https://jsearch.p.rapidapi.com/search"
+    url = "https://jsearch.p.rapidapi.com/search-v2"
     
     # Combine query and location for JSearch
     full_query = query
@@ -104,7 +104,7 @@ def search_jsearch_jobs(query: str, location: str = "", count: int = 5, api_key:
             raise RuntimeError(f"JSearch API responded with {response.status_code}: {response.text}")
             
         data = response.json()
-        results = data.get("data", [])
+        results = data.get("data", {}).get("jobs", [])
         
         # Limit to the count requested
         results = results[:count]
