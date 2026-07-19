@@ -2,7 +2,7 @@ import requests
 from src.config import settings
 from typing import List, Dict, Any
 
-def search_adzuna_jobs(query: str, location: str = "", count: int = 5) -> List[Dict[str, Any]]:
+def search_adzuna_jobs(query: str, location: str = "", count: int = 5, country: str = "") -> List[Dict[str, Any]]:
     """
     Query the Adzuna API for job recommendations based on key phrases and location.
     
@@ -10,15 +10,16 @@ def search_adzuna_jobs(query: str, location: str = "", count: int = 5) -> List[D
         query (str): Job role or key skills to search for (maps to 'what').
         location (str): Target city or region (maps to 'where').
         count (int): Max number of job recommendations to fetch.
+        country (str): The country code of the Adzuna site to query.
         
     Returns:
         List[Dict[str, Any]]: List of normalized job matching dicts.
     """
-    # Fetch country code from settings, default to "gb"
-    country = settings.ADZUNA_COUNTRY or "gb"
+    # Fetch country code from parameter or settings, default to "gb"
+    country_code = country or settings.ADZUNA_COUNTRY or "gb"
     
     # Adzuna search endpoint (Querying page 1)
-    url = f"https://api.adzuna.com/v1/api/jobs/{country.lower()}/search/1"
+    url = f"https://api.adzuna.com/v1/api/jobs/{country_code.lower()}/search/1"
     
     # Build query parameters
     params = {

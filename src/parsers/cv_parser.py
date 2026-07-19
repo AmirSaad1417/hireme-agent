@@ -12,17 +12,29 @@ def parse_cv_text_with_ai(raw_text: str) -> dict:
     
     # Prompt instructing the LLM
     prompt = f"""
-    You are an expert ATS (Applicant Tracking System) parser. Analyze the following unstructured text extracted from a CV and extract structured candidate profile data.
+    You are an expert ATS (Applicant Tracking System) parser and Career Consultant. Analyze the following unstructured text extracted from a CV and extract structured candidate profile data.
 
     Provide the output strictly as a JSON object matching this schema:
     {{
         "name": "Candidate's full name (or 'Unknown' if not found)",
         "email": "Candidate's email address (or empty string if not found)",
-        "key_skills": ["Skill 1", "Skill 2", "Skill 3", ... (limit to top 10-15 key professional/technical skills)],
+        "key_skills": ["Skill 1", "Skill 2", "Skill 3", ... (limit to top 15 key professional/technical skills)],
         "experience_level": "Junior, Mid, or Senior (deduced from years and depth of experience)",
         "target_roles": ["Role Title 1", "Role Title 2", ... (suggest 2-3 matching job roles based on experience and skills)],
         "target_location": "Target city, region or country if mentioned, otherwise empty string",
-        "summary": "A brief 2-3 sentence professional summary of the candidate's background and career goals"
+        "summary": "A brief 2-3 sentence professional summary of the candidate's background and career goals",
+        "ats_score": 85, // An integer between 50 and 99 evaluating the resume formatting, structure, and professional alignment
+        "career_score": 90, // An integer between 50 and 99 evaluating their overall career progression and depth of expertise
+        "strengths": ["Strength 1", "Strength 2", "Strength 3"], // Top 3 professional/technical strengths based on achievements
+        "weaknesses": ["Weakness 1", "Weakness 2"], // Top 2 development areas or growth needs
+        "skill_gaps": ["Gap 1", "Gap 2"], // Skills/technologies missing or useful to acquire for their target roles
+        "career_advice": "A short, actionable career growth tip tailored to their profile",
+        "skill_categories": {{
+            "Languages": ["Python", "SQL", ...],
+            "Frameworks & Libraries": ["Django", "FastAPI", ...],
+            "Databases & Tools": ["Docker", "PostgreSQL", ...],
+            "Specialized Fields": ["Machine Learning", "Cloud Arch", ...]
+        }} // Classify all key_skills into standard, clean categories.
     }}
 
     Extracted CV Text:
