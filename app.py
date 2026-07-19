@@ -11,6 +11,7 @@ st.set_page_config(
 
 # Global UI Redesign: Injecting styles and custom fonts
 st.markdown("""
+    <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
     
     /* Global Styles */
