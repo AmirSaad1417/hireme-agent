@@ -274,30 +274,25 @@ def results_page():
 
     with col_profile:
         # Profile header card
-        st.markdown(textwrap.dedent(f"""
-            <div class="profile-card">
-                <div class="profile-avatar">👨‍💻</div>
-                <div class="profile-name">{cv.get('name', 'Candidate')}</div>
-                <div class="profile-email">✉️ {cv.get('email', 'No email identified')}</div>
-                
-                <!-- Scores Row -->
-                <div class="score-row">
-                    <div class="score-box">
-                        <div class="score-val">{cv.get('career_score', 80)}%</div>
-                        <div class="score-label">Match Score</div>
-                    </div>
-                    <div class="score-box" style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 20px;">
-                        <div class="score-val ats">{cv.get('ats_score', 85)}%</div>
-                        <div class="score-label">ATS Rank</div>
-                    </div>
-                </div>
-                
-                <p style="font-size: 14px; line-height: 1.5; color: #d1d5db; margin-bottom: 20px;">
-                    <strong>Overview:</strong><br>
-                    <span style="font-size: 13px; color: #9ca3af;">{cv.get('summary', '')}</span>
-                </p>
-            </div>
-        """), unsafe_allow_html=True)
+        st.markdown(f"""<div class="profile-card">
+<div class="profile-avatar">👨‍💻</div>
+<div class="profile-name">{cv.get('name', 'Candidate')}</div>
+<div class="profile-email">✉️ {cv.get('email', 'No email identified')}</div>
+<div class="score-row">
+<div class="score-box">
+<div class="score-val">{cv.get('career_score', 80)}%</div>
+<div class="score-label">Match Score</div>
+</div>
+<div class="score-box" style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 20px;">
+<div class="score-val ats">{cv.get('ats_score', 85)}%</div>
+<div class="score-label">ATS Rank</div>
+</div>
+</div>
+<p style="font-size: 14px; line-height: 1.5; color: #d1d5db; margin-bottom: 20px;">
+<strong>Overview:</strong><br>
+<span style="font-size: 13px; color: #9ca3af;">{cv.get('summary', '')}</span>
+</p>
+</div>""", unsafe_allow_html=True)
 
         # Categorized Skills Tags
         st.markdown("<h4 style='margin-top:20px; font-weight:700;'>Categorized Skills</h4>", unsafe_allow_html=True)
@@ -320,41 +315,33 @@ def results_page():
         
         # Strengths Card
         strengths = cv.get("strengths", ["Strong programming background", "Good core problem solving"])
-        st.markdown(textwrap.dedent(f"""
-            <div class="insight-card strength">
-                <div class="insight-title">💪 Top Strengths</div>
-                {"".join([f'<div class="insight-item"><span class="insight-icon">✓</span>{item}</div>' for item in strengths])}
-            </div>
-        """), unsafe_allow_html=True)
+        st.markdown(f"""<div class="insight-card strength">
+<div class="insight-title">💪 Top Strengths</div>
+{"".join([f'<div class="insight-item"><span class="insight-icon">✓</span>{item}</div>' for item in strengths])}
+</div>""", unsafe_allow_html=True)
 
         # Weaknesses / Development Areas Card
         weaknesses = cv.get("weaknesses", ["Expand cloud certifications"])
-        st.markdown(textwrap.dedent(f"""
-            <div class="insight-card weakness">
-                <div class="insight-title">⚠️ Growth Areas</div>
-                {"".join([f'<div class="insight-item"><span class="insight-icon">⚠</span>{item}</div>' for item in weaknesses])}
-            </div>
-        """), unsafe_allow_html=True)
+        st.markdown(f"""<div class="insight-card weakness">
+<div class="insight-title">⚠️ Growth Areas</div>
+{"".join([f'<div class="insight-item"><span class="insight-icon">⚠</span>{item}</div>' for item in weaknesses])}
+</div>""", unsafe_allow_html=True)
 
         # Skill Gaps Card
         gaps = cv.get("skill_gaps", [])
         if gaps:
-            st.markdown(textwrap.dedent(f"""
-                <div class="insight-card gap">
-                    <div class="insight-title">🎯 Identified Skill Gaps</div>
-                    {"".join([f'<div class="insight-item"><span class="insight-icon">✗</span>{item}</div>' for item in gaps])}
-                </div>
-            """), unsafe_allow_html=True)
+            st.markdown(f"""<div class="insight-card gap">
+<div class="insight-title">🎯 Identified Skill Gaps</div>
+{"".join([f'<div class="insight-item"><span class="insight-icon">✗</span>{item}</div>' for item in gaps])}
+</div>""", unsafe_allow_html=True)
 
         # Career advice Card
         advice = cv.get("career_advice", "")
         if advice:
-            st.markdown(textwrap.dedent(f"""
-                <div class="insight-card" style="border-left-color: #06b6d4;">
-                    <div class="insight-title">💡 Strategic Career Tip</div>
-                    <div class="insight-text">{advice}</div>
-                </div>
-            """), unsafe_allow_html=True)
+            st.markdown(f"""<div class="insight-card" style="border-left-color: #06b6d4;">
+<div class="insight-title">💡 Strategic Career Tip</div>
+<div class="insight-text">{advice}</div>
+</div>""", unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
         
