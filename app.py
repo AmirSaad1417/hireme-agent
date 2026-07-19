@@ -1,3 +1,9 @@
+import sys
+# Force clean reload of all local src modules to prevent Streamlit hot-reloader KeyError bugs
+for key in list(sys.modules.keys()):
+    if key == "src" or key.startswith("src."):
+        sys.modules.pop(key, None)
+
 import streamlit as st
 from src.ui.upload_page import upload_page
 from src.ui.results_page import results_page

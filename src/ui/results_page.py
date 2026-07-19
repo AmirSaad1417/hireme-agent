@@ -256,6 +256,8 @@ def results_page():
     """, unsafe_allow_html=True)
 
     # State restoration logic
+    if "rapidapi_key" not in st.session_state:
+        st.session_state.rapidapi_key = ""
     if not st.session_state.cv_data and is_cv_loaded():
         st.session_state.cv_data = get_cv()
 
@@ -409,11 +411,13 @@ def results_page():
                 
                 # Dynamic key entry if not in settings
                 from src.config import settings
-                if not settings.RAPIDAPI_KEY or not settings.RAPIDAPI_KEY.strip():
+                active_rapidapi_key = st.session_state.rapidapi_key or settings.RAPIDAPI_KEY or ""
+                if not active_rapidapi_key.strip():
                     if "JSearch" in search_engine:
-                        user_key = st.text_input("Enter RapidAPI Key (enables LinkedIn/Indeed)", type="password")
+                        user_key = st.text_input("Enter RapidAPI Key (enables LinkedIn/Indeed)", type="password", value=st.session_state.rapidapi_key)
                         if user_key.strip():
-                            settings.RAPIDAPI_KEY = user_key.strip()
+                            st.session_state.rapidapi_key = user_key.strip()
+                            active_rapidapi_key = user_key.strip()
                 
             trigger_search = st.button("Query Global Job Markets 🚀", use_container_width=True)
 
@@ -424,7 +428,7 @@ def results_page():
                     from src.tools.job_search import search_jsearch_jobs
                     
                     if "JSearch" in search_engine:
-                        if not settings.RAPIDAPI_KEY or not settings.RAPIDAPI_KEY.strip():
+                        if not active_rapidapi_key.strip():
                             st.warning("⚠️ **RapidAPI Key Required**: Please enter a RapidAPI key to search LinkedIn & Indeed. Falling back to the Adzuna API database.")
                             jobs = search_adzuna_jobs(
                                 query=role_query,
@@ -436,7 +440,8 @@ def results_page():
                             jobs = search_jsearch_jobs(
                                 query=role_query,
                                 location=st.session_state.location,
-                                count=st.session_state.count
+                                count=st.session_state.count,
+                                api_key=active_rapidapi_key
                             )
                     else:
                         jobs = search_adzuna_jobs(

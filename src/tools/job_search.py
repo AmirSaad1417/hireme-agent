@@ -72,11 +72,12 @@ def search_adzuna_jobs(query: str, location: str = "", count: int = 5, country: 
     except Exception as e:
         raise RuntimeError(f"Unexpected error fetching jobs: {str(e)}")
 
-def search_jsearch_jobs(query: str, location: str = "", count: int = 5) -> List[Dict[str, Any]]:
+def search_jsearch_jobs(query: str, location: str = "", count: int = 5, api_key: str = "") -> List[Dict[str, Any]]:
     """
     Query the JSearch API (via RapidAPI) for jobs matching LinkedIn, Indeed, etc.
     """
-    if not settings.RAPIDAPI_KEY or not settings.RAPIDAPI_KEY.strip():
+    active_key = api_key or settings.RAPIDAPI_KEY
+    if not active_key or not active_key.strip():
         raise ValueError("RapidAPI key is not configured in environment or Streamlit secrets.")
         
     url = "https://jsearch.p.rapidapi.com/search"
@@ -87,7 +88,7 @@ def search_jsearch_jobs(query: str, location: str = "", count: int = 5) -> List[
         full_query = f"{query} in {location}"
         
     headers = {
-        "x-rapidapi-key": settings.RAPIDAPI_KEY,
+        "x-rapidapi-key": active_key,
         "x-rapidapi-host": "jsearch.p.rapidapi.com"
     }
     
