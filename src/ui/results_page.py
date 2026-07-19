@@ -1,5 +1,6 @@
 import streamlit as st
 import re
+import textwrap
 from src.memory.cv_store import get_cv, is_cv_loaded, clear_cv
 from src.tools.job_search import search_adzuna_jobs
 
@@ -273,7 +274,7 @@ def results_page():
 
     with col_profile:
         # Profile header card
-        st.markdown(f"""
+        st.markdown(textwrap.dedent(f"""
             <div class="profile-card">
                 <div class="profile-avatar">👨‍💻</div>
                 <div class="profile-name">{cv.get('name', 'Candidate')}</div>
@@ -296,7 +297,7 @@ def results_page():
                     <span style="font-size: 13px; color: #9ca3af;">{cv.get('summary', '')}</span>
                 </p>
             </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
 
         # Categorized Skills Tags
         st.markdown("<h4 style='margin-top:20px; font-weight:700;'>Categorized Skills</h4>", unsafe_allow_html=True)
@@ -319,41 +320,41 @@ def results_page():
         
         # Strengths Card
         strengths = cv.get("strengths", ["Strong programming background", "Good core problem solving"])
-        st.markdown(f"""
+        st.markdown(textwrap.dedent(f"""
             <div class="insight-card strength">
                 <div class="insight-title">💪 Top Strengths</div>
                 {"".join([f'<div class="insight-item"><span class="insight-icon">✓</span>{item}</div>' for item in strengths])}
             </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
 
         # Weaknesses / Development Areas Card
         weaknesses = cv.get("weaknesses", ["Expand cloud certifications"])
-        st.markdown(f"""
+        st.markdown(textwrap.dedent(f"""
             <div class="insight-card weakness">
                 <div class="insight-title">⚠️ Growth Areas</div>
                 {"".join([f'<div class="insight-item"><span class="insight-icon">⚠</span>{item}</div>' for item in weaknesses])}
             </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
 
         # Skill Gaps Card
         gaps = cv.get("skill_gaps", [])
         if gaps:
-            st.markdown(f"""
+            st.markdown(textwrap.dedent(f"""
                 <div class="insight-card gap">
                     <div class="insight-title">🎯 Identified Skill Gaps</div>
                     {"".join([f'<div class="insight-item"><span class="insight-icon">✗</span>{item}</div>' for item in gaps])}
                 </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
 
         # Career advice Card
         advice = cv.get("career_advice", "")
         if advice:
-            st.markdown(f"""
+            st.markdown(textwrap.dedent(f"""
                 <div class="insight-card" style="border-left-color: #06b6d4;">
                     <div class="insight-title">💡 Strategic Career Tip</div>
                     <div class="insight-text">{advice}</div>
                 </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -493,7 +494,7 @@ def results_page():
                     clean_desc = clean_desc[:220].strip() + "..."
 
                 # Render Card
-                st.markdown(f"""
+                st.markdown(textwrap.dedent(f"""
                     <div class="job-card">
                         <div class="job-header-row">
                             <div class="job-title">{job.get('title')}</div>
@@ -512,6 +513,6 @@ def results_page():
                             </div>
                         </a>
                     </div>
-                """, unsafe_allow_html=True)
+                """), unsafe_allow_html=True)
         else:
             st.info("ℹ️ No jobs matched your profile. Try modifying the job title query, location, or changing the country database.")

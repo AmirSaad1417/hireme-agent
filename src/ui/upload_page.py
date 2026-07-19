@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+import textwrap
 from src.parsers.cv_extractor import extract_cv_text
 from src.parsers.cv_parser import parse_cv_text_with_ai
 from src.memory.cv_store import save_cv
@@ -204,18 +205,18 @@ def upload_page():
 
         if not uploaded_file:
             # Custom styled Drop Zone if empty
-            st.markdown("""
+            st.markdown(textwrap.dedent("""
                 <div class="dropzone-container">
                     <div class="upload-icon">📤</div>
                     <h3 style="margin-top: 0; font-size: 20px; font-weight: 700; color: #f3f4f6;">Drag and drop your CV here</h3>
                     <p style="color: #9ca3af; font-size: 14px; margin-bottom: 5px;">Accepts PDF (.pdf) and Word (.docx) files</p>
                     <p style="color: #6366f1; font-size: 12px; font-weight: 600;">Max size: 10MB</p>
                 </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
             
             # Guidelines Cards
             st.markdown("<div class='guide-container'>", unsafe_allow_html=True)
-            st.markdown("""
+            st.markdown(textwrap.dedent("""
                 <div class="guide-card">
                     <div class="guide-num">Step 01</div>
                     <div class="guide-title">Upload Profile</div>
@@ -231,7 +232,7 @@ def upload_page():
                     <div class="guide-title">Search Jobs</div>
                     <div class="guide-desc">Instantly query active job boards globally to match with direct job recommenders.</div>
                 </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
         else:

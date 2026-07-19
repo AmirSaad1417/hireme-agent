@@ -90,6 +90,40 @@ st.markdown("""
         100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
     }
     
+    /* Style all streamlit labels to be visible light grey */
+    [data-testid="stWidgetLabel"] p {
+        color: #e5e7eb !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+    }
+    
+    /* Ensure input text values and dropdown items are clean white/light grey */
+    input, select, textarea, [data-testid="stSelectbox"] div, [data-testid="stNumberInput"] div {
+        color: #ffffff !important;
+    }
+    
+    /* Streamlit secondary button styling (e.g. Query Global Job Markets button) */
+    div.stButton > button {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 8px !important;
+        padding: 10px 20px !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
+        transition: all 0.2s ease !important;
+        width: 100% !important;
+    }
+    div.stButton > button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5) !important;
+        border-color: #a78bfa !important;
+        color: #ffffff !important;
+    }
+    div.stButton > button:active {
+        transform: translateY(0) !important;
+    }
+    
     /* Buffer spacer for top layout */
     .navbar-spacer {
         height: 70px;
