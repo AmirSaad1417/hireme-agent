@@ -97,9 +97,35 @@ st.markdown("""
         font-size: 13px !important;
     }
     
-    /* Ensure input text values and dropdown items are clean white/light grey */
-    input, select, textarea, [data-testid="stSelectbox"] div, [data-testid="stNumberInput"] div {
+    /* Expander header styling (Ensure text and toggle arrow are bright white before hover) */
+    [data-testid="stExpander"] details summary {
         color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+    [data-testid="stExpander"] details summary svg {
+        fill: #ffffff !important;
+        color: #ffffff !important;
+    }
+    [data-testid="stExpander"] details summary:hover {
+        color: #a78bfa !important;
+    }
+    [data-testid="stExpander"] details summary:hover svg {
+        fill: #a78bfa !important;
+        color: #a78bfa !important;
+    }
+    
+    /* Style all Streamlit input areas for dark mode premium Vercel look */
+    div[data-baseweb="input"], div[data-baseweb="select"], [data-testid="stNumberInput"] {
+        background-color: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 8px !important;
+        color: #ffffff !important;
+    }
+    
+    /* Ensure input elements use white text */
+    input, select, textarea, [data-testid="stSelectbox"] div, [data-testid="stNumberInput"] input {
+        color: #ffffff !important;
+        background-color: transparent !important;
     }
     
     /* Streamlit secondary button styling (e.g. Query Global Job Markets button) */
