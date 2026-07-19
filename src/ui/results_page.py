@@ -387,26 +387,64 @@ def results_page():
                 role_query = st.text_input("Target Job Title Query", value=default_role)
                 location_query = st.text_input("City/Region Filter", value=st.session_state.location)
                 st.session_state.location = location_query
+                
+                # Search engine selector
+                search_engine = st.selectbox(
+                    "Job Data Provider", 
+                    ["JSearch API (LinkedIn/Indeed/Glassdoor)", "Adzuna API (Global DB)"],
+                    index=0
+                )
             with f_col2:
-                # Country Selector! Dynamic global searching
-                country_name = st.selectbox("Search Country Database", list(country_options.keys()), index=0)
+                # Country Selector! Dynamic global searching (Only applicable for Adzuna)
+                country_name = st.selectbox(
+                    "Adzuna Search Country", 
+                    list(country_options.keys()), 
+                    index=0,
+                    disabled=("Adzuna" not in search_engine)
+                )
                 selected_country_code = country_options[country_name]
                 
                 results_count = st.number_input("Maximum Matches to Display", min_value=1, max_value=10, value=st.session_state.count)
                 st.session_state.count = results_count
                 
+                # Dynamic key entry if not in settings
+                from src.config import settings
+                if not settings.RAPIDAPI_KEY or not settings.RAPIDAPI_KEY.strip():
+                    if "JSearch" in search_engine:
+                        user_key = st.text_input("Enter RapidAPI Key (enables LinkedIn/Indeed)", type="password")
+                        if user_key.strip():
+                            settings.RAPIDAPI_KEY = user_key.strip()
+                
             trigger_search = st.button("Query Global Job Markets 🚀", use_container_width=True)
 
         # Execute Search automatically or on filter trigger
         if trigger_search or not st.session_state.results:
-            with st.spinner("Searching matching jobs globally..."):
+            with st.spinner("Searching matching jobs..."):
                 try:
-                    jobs = search_adzuna_jobs(
-                        query=role_query,
-                        location=st.session_state.location,
-                        count=st.session_state.count,
-                        country=selected_country_code
-                    )
+                    from src.tools.job_search import search_jsearch_jobs
+                    
+                    if "JSearch" in search_engine:
+                        if not settings.RAPIDAPI_KEY or not settings.RAPIDAPI_KEY.strip():
+                            st.warning("⚠️ **RapidAPI Key Required**: Please enter a RapidAPI key to search LinkedIn & Indeed. Falling back to the Adzuna API database.")
+                            jobs = search_adzuna_jobs(
+                                query=role_query,
+                                location=st.session_state.location,
+                                count=st.session_state.count,
+                                country=selected_country_code
+                            )
+                        else:
+                            jobs = search_jsearch_jobs(
+                                query=role_query,
+                                location=st.session_state.location,
+                                count=st.session_state.count
+                            )
+                    else:
+                        jobs = search_adzuna_jobs(
+                            query=role_query,
+                            location=st.session_state.location,
+                            count=st.session_state.count,
+                            country=selected_country_code
+                        )
                     
                     # Core Experience Alignment Filter
                     # If Junior, filter out titles matching Senior Keywords (Director, Manager, Lead, Senior)

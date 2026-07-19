@@ -9,6 +9,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 ADZUNA_APP_ID = os.getenv("ADZUNA_APP_ID")
 ADZUNA_APP_KEY = os.getenv("ADZUNA_APP_KEY")
 ADZUNA_COUNTRY = os.getenv("ADZUNA_COUNTRY")
+RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY")
 
 # Check if any of the first three keys are missing
 missing_keys = []

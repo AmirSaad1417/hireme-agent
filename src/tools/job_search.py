@@ -71,3 +71,71 @@ def search_adzuna_jobs(query: str, location: str = "", count: int = 5, country: 
         raise RuntimeError(f"Network error communicating with Adzuna: {str(e)}")
     except Exception as e:
         raise RuntimeError(f"Unexpected error fetching jobs: {str(e)}")
+
+def search_jsearch_jobs(query: str, location: str = "", count: int = 5) -> List[Dict[str, Any]]:
+    """
+    Query the JSearch API (via RapidAPI) for jobs matching LinkedIn, Indeed, etc.
+    """
+    if not settings.RAPIDAPI_KEY or not settings.RAPIDAPI_KEY.strip():
+        raise ValueError("RapidAPI key is not configured in environment or Streamlit secrets.")
+        
+    url = "https://jsearch.p.rapidapi.com/search"
+    
+    # Combine query and location for JSearch
+    full_query = query
+    if location and location.strip():
+        full_query = f"{query} in {location}"
+        
+    headers = {
+        "x-rapidapi-key": settings.RAPIDAPI_KEY,
+        "x-rapidapi-host": "jsearch.p.rapidapi.com"
+    }
+    
+    params = {
+        "query": full_query,
+        "page": "1",
+        "num_pages": "1"
+    }
+    
+    try:
+        response = requests.get(url, headers=headers, params=params, timeout=12)
+        if response.status_code != 200:
+            raise RuntimeError(f"JSearch API responded with {response.status_code}: {response.text}")
+            
+        data = response.json()
+        results = data.get("data", [])
+        
+        # Limit to the count requested
+        results = results[:count]
+        
+        jobs = []
+        for item in results:
+            # Construct location string
+            city = item.get("job_city")
+            country = item.get("job_country")
+            loc = ""
+            if city and country:
+                loc = f"{city}, {country}"
+            elif city:
+                loc = city
+            elif country:
+                loc = country
+            else:
+                loc = "Remote / Worldwide"
+                
+            jobs.append({
+                "id": item.get("job_id", ""),
+                "title": item.get("job_title", "Job Opportunity"),
+                "company": item.get("employer_name", "Unknown Company"),
+                "location": loc,
+                "salary_min": item.get("job_min_salary"),
+                "salary_max": item.get("job_max_salary"),
+                "description": item.get("job_description", ""),
+                "url": item.get("job_apply_link", ""),
+                "created": item.get("job_posted_at_datetime_utc", "")
+            })
+        return jobs
+    except requests.exceptions.RequestException as e:
+        raise RuntimeError(f"Network error communicating with JSearch: {str(e)}")
+    except Exception as e:
+        raise RuntimeError(f"Unexpected JSearch error: {str(e)}")
