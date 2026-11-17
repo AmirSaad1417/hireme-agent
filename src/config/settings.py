@@ -24,6 +24,7 @@ def _get_config(key: str, default: str = "") -> str:
 
 GROQ_API_KEY = _get_config("GROQ_API_KEY")
 OPENAI_API_KEY = _get_config("OPENAI_API_KEY")
+GEMINI_API_KEY = _get_config("GEMINI_API_KEY")
 ADZUNA_APP_ID = _get_config("ADZUNA_APP_ID")
 ADZUNA_APP_KEY = _get_config("ADZUNA_APP_KEY")
 ADZUNA_COUNTRY = _get_config("ADZUNA_COUNTRY", "gb")

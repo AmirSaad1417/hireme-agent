@@ -48,20 +48,43 @@ def parse_cv_text(raw_text: str) -> Dict[str, Any]:
     if not raw_text or not raw_text.strip():
         raise ValueError("Cannot parse CV: Extracted text is empty.")
 
-    client = OpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL)
-
-    response = client.chat.completions.create(
-        model=LLM_MODEL,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {
-                "role": "user",
-                "content": f"Extract structured candidate information from this CV:\n\n{raw_text}",
-            },
-        ],
-        temperature=0.0,
-        response_format={"type": "json_object"},
-    )
+    try:
+        client = OpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL)
+        response = client.chat.completions.create(
+            model=LLM_MODEL,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {
+                    "role": "user",
+                    "content": f"Extract structured candidate information from this CV:\n\n{raw_text}",
+                },
+            ],
+            temperature=0.0,
+            response_format={"type": "json_object"},
+        )
+    except Exception as err:
+        from src.config.settings import GEMINI_API_KEY
+        err_str = str(err).lower()
+        if ("429" in err_str or "rate limit" in err_str or "quota" in err_str or "503" in err_str) and GEMINI_API_KEY:
+            print(f"Primary LLM rate limited ({err}). Seamlessly failing over to Google Gemini...")
+            gemini_client = OpenAI(
+                api_key=GEMINI_API_KEY,
+                base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+            )
+            response = gemini_client.chat.completions.create(
+                model="gemini-3.5-flash-lite",
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {
+                        "role": "user",
+                        "content": f"Extract structured candidate information from this CV:\n\n{raw_text}",
+                    },
+                ],
+                temperature=0.0,
+                response_format={"type": "json_object"},
+            )
+        else:
+            raise err
 
     raw_response = response.choices[0].message.content or ""
 

@@ -156,12 +156,35 @@ Instruction:
             response = client.chat.completions.create(**api_kwargs)
         except Exception as err:
             err_str = str(err).lower()
-            # If 429 rate limit hit on 120b, fallback to 20b model immediately
+            from src.config.settings import GEMINI_API_KEY
+            # If 429 rate limit hit on 120b, try 20b model first
             if ("429" in err_str or "rate limit" in err_str) and active_model != "openai/gpt-oss-20b":
                 print(f"Switching from {active_model} to openai/gpt-oss-20b due to rate limits...")
                 active_model = "openai/gpt-oss-20b"
                 api_kwargs["model"] = active_model
-                response = client.chat.completions.create(**api_kwargs)
+                try:
+                    response = client.chat.completions.create(**api_kwargs)
+                except Exception as inner_err:
+                    if GEMINI_API_KEY:
+                        print(f"Both Groq models capped, seamlessly failing over agent to Google Gemini...")
+                        gemini_client = OpenAI(
+                            api_key=GEMINI_API_KEY,
+                            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+                        )
+                        active_model = "gemini-3.5-flash-lite"
+                        api_kwargs["model"] = active_model
+                        response = gemini_client.chat.completions.create(**api_kwargs)
+                    else:
+                        raise inner_err
+            elif ("429" in err_str or "rate limit" in err_str or "quota" in err_str) and GEMINI_API_KEY:
+                print(f"Groq rate limit hit. Seamlessly failing over agent to Google Gemini...")
+                gemini_client = OpenAI(
+                    api_key=GEMINI_API_KEY,
+                    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+                )
+                active_model = "gemini-3.5-flash-lite"
+                api_kwargs["model"] = active_model
+                response = gemini_client.chat.completions.create(**api_kwargs)
             else:
                 raise err
 
