@@ -130,7 +130,7 @@ Instruction:
         {"role": "user", "content": user_message},
     ]
 
-    max_iterations = 5
+    max_iterations = 4
     client = OpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL)
 
     # Pass search tool directly to ensure instant execution
@@ -138,19 +138,32 @@ Instruction:
     if not active_tools:
         active_tools = TOOL_DEFINITIONS
 
+    active_model = LLM_MODEL or "openai/gpt-oss-20b"
+
     for iteration in range(1, max_iterations + 1):
         print(f"Agent iteration {iteration}/{max_iterations}")
 
+        # Always provide tools so Groq never rejects with 'Tool choice is none'
         api_kwargs: Dict[str, Any] = {
-            "model": LLM_MODEL,
+            "model": active_model,
             "messages": messages,
+            "tools": active_tools,
+            "tool_choice": "auto",
             "temperature": 0.3,
         }
-        if iteration == 1:
-            api_kwargs["tools"] = active_tools
-            api_kwargs["tool_choice"] = "auto"
 
-        response = client.chat.completions.create(**api_kwargs)
+        try:
+            response = client.chat.completions.create(**api_kwargs)
+        except Exception as err:
+            err_str = str(err).lower()
+            # If 429 rate limit hit on 120b, fallback to 20b model immediately
+            if ("429" in err_str or "rate limit" in err_str) and active_model != "openai/gpt-oss-20b":
+                print(f"Switching from {active_model} to openai/gpt-oss-20b due to rate limits...")
+                active_model = "openai/gpt-oss-20b"
+                api_kwargs["model"] = active_model
+                response = client.chat.completions.create(**api_kwargs)
+            else:
+                raise err
 
         message = response.choices[0].message
 
@@ -179,6 +192,12 @@ Instruction:
                     "name": tool_name,
                     "content": tool_result,
                 })
+
+            # Explicit guidance for next turn to write cover letters immediately
+            messages.append({
+                "role": "user",
+                "content": "Vacancies retrieved. Now write a tailored 3-paragraph cover letter for each job above and return ONLY the final JSON array. Do not call any further tools.",
+            })
             continue
 
         # If no tool calls, check for final response

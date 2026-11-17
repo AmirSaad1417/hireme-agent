@@ -12,7 +12,7 @@
 
 ## 🚀 Live Demo & Workflow
 
-- **Live Application:** [HireMe Agent on Streamlit Cloud](https://hireme-agent.streamlit.app) *(Deploy via Streamlit Community Cloud)*
+- **Live Application:** [HireMe Agent on Streamlit Cloud](https://hireme-agent-jvkkgqltr2mrttq8g32qnk.streamlit.app/)
 - **Repository:** [github.com/AmirSaad1417/hireme-agent](https://github.com/AmirSaad1417/hireme-agent)
 
 ---

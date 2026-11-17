@@ -33,7 +33,7 @@ if GROQ_API_KEY and not GROQ_API_KEY.startswith("your_"):
     LLM_PROVIDER = "groq"
     LLM_API_KEY = GROQ_API_KEY
     LLM_BASE_URL = "https://api.groq.com/openai/v1"
-    LLM_MODEL = "openai/gpt-oss-120b"
+    LLM_MODEL = _get_config("LLM_MODEL", "openai/gpt-oss-20b")
     # Ensure OPENAI_API_KEY is non-empty for backwards compatibility if needed
     if not OPENAI_API_KEY:
         OPENAI_API_KEY = GROQ_API_KEY
@@ -47,7 +47,7 @@ else:
     LLM_PROVIDER = "groq" if GROQ_API_KEY else "openai"
     LLM_API_KEY = GROQ_API_KEY or OPENAI_API_KEY
     LLM_BASE_URL = "https://api.groq.com/openai/v1" if GROQ_API_KEY else None
-    LLM_MODEL = "openai/gpt-oss-120b" if GROQ_API_KEY else "gpt-4o"
+    LLM_MODEL = _get_config("LLM_MODEL", "openai/gpt-oss-20b") if GROQ_API_KEY else "gpt-4o"
 
 # Validate required variables
 _missing_keys = []
